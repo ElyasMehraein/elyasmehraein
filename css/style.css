@@ -1,0 +1,297 @@
+/* =========================================================
+   Elyas Mehraein — personal website
+   Static, zero-JavaScript, single page.
+   1. Tokens   2. Base   3. Background   4. Hero
+   5. Skills   6. Contact   7. Footer   8. Responsive
+   ========================================================= */
+
+/* 1. Tokens ------------------------------------------------ */
+:root {
+    --bg: #0a0b0d;
+    --text: #f4f6f8;
+    --muted: #a9b1bb;
+    --accent: #6cbaff;
+    /* original site accent */
+    --accent-warm: #e0322c;
+    /* red from the background artwork */
+    --card: rgba(12, 14, 17, 0.55);
+    --line: rgba(255, 255, 255, 0.13);
+    --maxw: 1020px;
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: Georgia, "Times New Roman", serif;
+}
+
+/* 2. Base -------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--font-sans);
+    color: var(--text);
+    background-color: var(--bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 12px;
+    z-index: 10;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: var(--accent);
+    color: #06121f;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.skip-link:focus {
+    left: 12px;
+}
+
+/* 3. Background ------------------------------------------- */
+.bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: var(--bg) url("../img/bg.jpg") center / cover no-repeat;
+}
+
+.bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(125% 85% at 50% 18%, rgba(10, 11, 13, 0.42), rgba(10, 11, 13, 0.9) 72%),
+        linear-gradient(rgba(10, 11, 13, 0.5), rgba(10, 11, 13, 0.8));
+}
+
+/* 4. Hero -------------------------------------------------- */
+.page {
+    flex: 1;
+    width: 100%;
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: clamp(26px, 6vw, 72px) clamp(20px, 5vw, 44px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(30px, 5vh, 58px);
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(26px, 4.5vw, 54px);
+}
+
+.photo {
+    position: relative;
+    animation: rise 0.7s ease both;
+}
+
+.photo img {
+    display: block;
+    width: clamp(184px, 24vw, 250px);
+    border-radius: 20px;
+    box-shadow: 0 26px 60px rgba(0, 0, 0, 0.6);
+}
+
+.photo::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
+    border: 1px solid rgba(108, 186, 255, 0.38);
+    border-radius: 28px;
+    pointer-events: none;
+}
+
+.intro {
+    animation: rise 0.7s 0.08s ease both;
+}
+
+.eyebrow {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(15px, 1.5vw, 18px);
+    color: var(--muted);
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(2.1rem, 5.2vw, 3.35rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.022em;
+}
+
+/* modern nod to the original double underline */
+h1::after {
+    content: "";
+    display: block;
+    width: min(240px, 46%);
+    height: 5px;
+    margin-top: 0.6rem;
+    border-radius: 3px;
+    background: linear-gradient(90deg,
+            var(--accent) 0 58%,
+            var(--accent-warm) 58% 100%);
+}
+
+.tagline {
+    max-width: 48ch;
+    margin: 1.1rem 0 0;
+    font-size: clamp(15px, 1.6vw, 17px);
+    line-height: 1.72;
+    color: var(--muted);
+}
+
+/* 5. Skills ------------------------------------------------ */
+.skills {
+    margin: 1.5rem 0 0;
+}
+
+.skills img {
+    width: 258px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* 6. Contact ----------------------------------------------- */
+.contact {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    animation: rise 0.7s 0.16s ease both;
+}
+
+.contact a {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--card);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+}
+
+.contact a:hover {
+    transform: translateY(-2px);
+    border-color: rgba(108, 186, 255, 0.55);
+    background-color: rgba(108, 186, 255, 0.14);
+}
+
+.contact svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+}
+
+/* 7. Footer ------------------------------------------------ */
+.site-footer {
+    padding: 0 20px 22px;
+    text-align: center;
+}
+
+.site-footer p {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(169, 177, 187, 0.75);
+}
+
+/* 8. Responsive -------------------------------------------- */
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 860px) {
+    .hero {
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
+        text-align: center;
+    }
+
+    .photo img {
+        width: clamp(160px, 44vw, 210px);
+    }
+
+    h1::after {
+        margin-inline: auto;
+    }
+
+    .tagline {
+        margin-inline: auto;
+    }
+
+    .contact a {
+        flex: 1 1 calc(50% - 12px);
+        justify-content: center;
+    }
+}
+
+@media (max-width: 420px) {
+    .contact a {
+        flex: 1 1 100%;
+        padding: 13px 16px;
+    }
+
+    .site-footer {
+        padding-bottom: 16px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.001ms !important;
+    }
+
+    .contact a:hover {
+        transform: none;
+    }
+}
