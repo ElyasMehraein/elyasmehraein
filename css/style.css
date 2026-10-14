@@ -150,24 +150,12 @@ img {
 }
 
 /* Sword Cursor */
-@media (pointer: fine) {
-    body, a, button, input {
-        cursor: none !important;
-    }
-
-    .sword-cursor {
-        display: block;
-    }
-}
-
-@media (pointer: coarse) {
-    .sword-cursor {
-        display: none;
-    }
+body, a, button, input {
+    cursor: none !important;
 }
 
 .sword-cursor {
-    display: none;
+    display: block;
     position: fixed;
     top: 0;
     left: 0;

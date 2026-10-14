@@ -8,11 +8,11 @@
 
     const IMAGES = {
         normal: 'img/elyas.jpg',
-        left: 'img/elyas-left.jpg',     // Crouching / dodging in left corner
-        right: 'img/elyas-right.jpg',   // Crouching / dodging in right corner
-        top: 'img/elyas-top.jpg',       // Dodging in top area
-        bottom: 'img/elyas-bottom.jpg', // Dodging in bottom area
-        sliced: 'img/elyas-sliced.jpg'  // Cup sliced in half, tea spilling
+        left: 'img/elyas-dodge-left.jpg',
+        right: 'img/elyas-dodge-right.jpg',
+        top: 'img/elyas.jpg',
+        bottom: 'img/elyas.jpg',
+        sliced: 'img/elyas-sliced.jpg'
     };
 
     // Preload all images so switching is instant without flicker
