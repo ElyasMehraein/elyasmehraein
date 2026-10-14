@@ -10,8 +10,8 @@
         normal: 'img/elyas.jpg',
         left: 'img/elyas-dodge-left.jpg',
         right: 'img/elyas-dodge-right.jpg',
-        top: 'img/elyas.jpg',
-        bottom: 'img/elyas.jpg',
+        top: 'img/elyas-dodge-top.jpg',
+        bottom: 'img/elyas-dodge-bottom.jpg',
         sliced: 'img/elyas-sliced.jpg'
     };
 
