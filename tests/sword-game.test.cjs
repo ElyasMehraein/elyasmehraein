@@ -89,32 +89,47 @@ test('a finger reveals and moves the sword anywhere on screen, then hides it', (
     const { window, sword } = setup();
     sendTouch(window, 'touchstart', touch(1, 20, 40));
     assert.equal(sword.style.opacity, '1');
-    assert.equal(sword.style.transform, 'translate3d(20px, 40px, 0)');
+    assert.equal(sword.style.transform, 'translate3d(-80px, -60px, 0)');
     assert.equal(sword.classList.contains('touching'), true);
 
     sendTouch(window, 'touchmove', touch(1, 350, 610));
-    assert.equal(sword.style.transform, 'translate3d(350px, 610px, 0)');
+    assert.equal(sword.style.transform, 'translate3d(250px, 510px, 0)');
     sendTouch(window, 'touchend', touch(1, 350, 610));
     assert.equal(sword.style.opacity, '0');
     assert.equal(sword.classList.contains('touching'), false);
 });
 
+test('touch reactions follow the shifted sword tip instead of the finger', () => {
+    const { window, portrait, sword } = setup();
+    sendTouch(window, 'touchstart', touch(1, 200, 150));
+    assert.equal(sword.style.transform, 'translate3d(100px, 50px, 0)');
+    assert.equal(portrait.src, 'img/elyas.jpg'); // finger is over the photo, but the blade tip is not
+
+    sendTouch(window, 'touchmove', touch(1, 350, 450));
+    assert.equal(sword.style.transform, 'translate3d(250px, 350px, 0)');
+    assert.equal(portrait.src, 'img/elyas-sliced.jpg'); // blade tip enters the lower half while finger is outside
+
+    sendTouch(window, 'touchmove', touch(1, 450, 650));
+    assert.equal(portrait.src, 'img/elyas.jpg');
+    sendTouch(window, 'touchcancel', touch(1, 450, 650));
+});
+
 test('the lower half of the portrait slices; the upper half does not', () => {
     const { window, photo, portrait, sword, advance } = setup();
-    sendTouch(window, 'touchstart', touch(1, 290, 490)); // lower corner
+    sendTouch(window, 'touchstart', touch(1, 390, 490)); // finger is outside; blade tip lands in the lower-right
     assert.equal(portrait.src, 'img/elyas-sliced.jpg');
     photo.dispatch('pointerleave', { pointerType: 'touch' });
     assert.equal(portrait.src, 'img/elyas-sliced.jpg');
-    sendTouch(window, 'touchend', touch(1, 290, 490));
+    sendTouch(window, 'touchend', touch(1, 390, 490));
     advance(899);
     assert.equal(portrait.src, 'img/elyas-sliced.jpg');
     advance(1);
     assert.equal(portrait.src, 'img/elyas.jpg');
 
-    sendTouch(window, 'touchstart', touch(2, 200, 140));
+    sendTouch(window, 'touchstart', touch(2, 250, 250)); // blade tip is in the upper half
     assert.equal(portrait.src, 'img/elyas-dodge-bottom.jpg');
     assert.equal(sword.style.opacity, '1');
-    sendTouch(window, 'touchend', touch(2, 200, 140));
+    sendTouch(window, 'touchend', touch(2, 250, 250));
     advance(900);
     assert.equal(portrait.src, 'img/elyas.jpg');
 });
@@ -122,13 +137,13 @@ test('the lower half of the portrait slices; the upper half does not', () => {
 test('dragging into and out of the portrait updates its reaction', () => {
     const { window, portrait, sword } = setup();
     sendTouch(window, 'touchstart', touch(7, 30, 50));
-    sendTouch(window, 'touchmove', touch(7, 240, 400));
+    sendTouch(window, 'touchmove', touch(7, 240, 450));
     assert.equal(portrait.src, 'img/elyas-sliced.jpg');
-    sendTouch(window, 'touchmove', touch(7, 200, 140));
+    sendTouch(window, 'touchmove', touch(7, 250, 300));
     assert.equal(portrait.src, 'img/elyas-dodge-bottom.jpg');
-    sendTouch(window, 'touchmove', touch(7, 320, 530));
+    sendTouch(window, 'touchmove', touch(7, 410, 550));
     assert.equal(portrait.src, 'img/elyas.jpg');
-    sendTouch(window, 'touchcancel', touch(7, 320, 530));
+    sendTouch(window, 'touchcancel', touch(7, 410, 550));
     assert.equal(sword.style.opacity, '0');
     assert.equal(portrait.src, 'img/elyas.jpg');
 });
@@ -138,12 +153,12 @@ test('only the first finger controls the sword and a new touch cancels the old r
     sendTouch(window, 'touchstart', touch(1, 200, 400));
     sendTouch(window, 'touchstart', touch(2, 10, 10));
     sendTouch(window, 'touchmove', touch(2, 5, 5));
-    assert.equal(sword.style.transform, 'translate3d(200px, 400px, 0)');
+    assert.equal(sword.style.transform, 'translate3d(100px, 300px, 0)');
     sendTouch(window, 'touchend', touch(2, 5, 5));
     assert.equal(sword.style.opacity, '1');
     sendTouch(window, 'touchend', touch(1, 200, 400));
     advance(200);
-    sendTouch(window, 'touchstart', touch(3, 200, 150));
+    sendTouch(window, 'touchstart', touch(3, 250, 250));
     advance(900);
     assert.equal(portrait.src, 'img/elyas-dodge-bottom.jpg');
 });

@@ -175,15 +175,10 @@ img {
     transition: opacity 0.2s ease;
 }
 
-/* A quick tap should reveal the sword immediately, not just start a fade-in. */
+/* A quick tap should reveal the sword immediately, not just start a fade-in.
+   The touch handler also offsets the cursor and its hit point together. */
 .sword-cursor.touching {
     transition: none;
-}
-
-/* While a finger is down, lift the sword 100px up and left so it isn't hidden under the finger. */
-.sword-cursor.touching {
-    margin-left: -104px;
-    margin-top: -104px;
 }
 
 .sword-svg {

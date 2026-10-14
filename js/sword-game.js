@@ -15,6 +15,10 @@
         sliced: 'img/elyas-sliced.jpg'
     };
 
+    // The blade tip sits about 100px up-left from the finger (104px box offset minus
+    // the tip's ~4px inset). Use one offset for both the visible sword and its hit point.
+    const TOUCH_SWORD_OFFSET = 100;
+
     // Preload all images so switching is instant without flicker
     Object.values(IMAGES).forEach((src) => {
         const img = new Image();
@@ -76,8 +80,16 @@
             portraitImg.src = IMAGES[state] || IMAGES.normal;
         }
 
-        function positionSword(point) {
-            swordCursor.style.transform = `translate3d(${point.clientX}px, ${point.clientY}px, 0)`;
+        function getTouchImpactPoint(touch) {
+            return {
+                clientX: touch.clientX - TOUCH_SWORD_OFFSET,
+                clientY: touch.clientY - TOUCH_SWORD_OFFSET
+            };
+        }
+
+        function positionSword(point, isTouch = false) {
+            const swordPoint = isTouch ? getTouchImpactPoint(point) : point;
+            swordCursor.style.transform = `translate3d(${swordPoint.clientX}px, ${swordPoint.clientY}px, 0)`;
             swordCursor.style.opacity = '1';
         }
 
@@ -101,16 +113,17 @@
             }
         }
 
-        // Touch events keep tracking the finger even if a swipe began outside the photo
-        // or the browser starts scrolling. Only the portrait itself disables scrolling.
+        // Keep tracking the finger if a swipe starts outside the photo or scrolling starts;
+        // hit-test at the offset point used to position the sword tip. Only .photo blocks scrolling.
         function updateTouchPhoto(touch) {
+            const impactPoint = getTouchImpactPoint(touch);
             const rect = photoArea.getBoundingClientRect();
-            const inside = touch.clientX >= rect.left && touch.clientX <= rect.right &&
-                touch.clientY >= rect.top && touch.clientY <= rect.bottom;
+            const inside = impactPoint.clientX >= rect.left && impactPoint.clientX <= rect.right &&
+                impactPoint.clientY >= rect.top && impactPoint.clientY <= rect.bottom;
 
             if (inside) {
                 touchOnPhoto = true;
-                updateStateFromPointer(touch, true, rect);
+                updateStateFromPointer(impactPoint, true, rect);
             } else if (touchOnPhoto) {
                 touchOnPhoto = false;
                 setPhotoState('normal');
@@ -166,7 +179,7 @@
             touchOnPhoto = false;
             isSliced = false;
             swordCursor.classList.add('touching');
-            positionSword(touch);
+            positionSword(touch, true);
             slashSword();
             updateTouchPhoto(touch);
             if (!touchOnPhoto) setPhotoState('normal');
@@ -175,7 +188,7 @@
         window.addEventListener('touchmove', (e) => {
             const touch = getActiveTouch(e.changedTouches);
             if (!touch) return;
-            positionSword(touch);
+            positionSword(touch, true);
             updateTouchPhoto(touch);
         }, { passive: true });
 
