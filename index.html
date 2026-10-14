@@ -56,12 +56,28 @@
 
     <main id="main" class="page">
         <section class="hero">
-            <div class="photo">
-                <picture>
-                    <source srcset="img/elyas.webp" type="image/webp">
-                    <img src="img/elyas.jpg" width="300" height="400"
-                        alt="Portrait of Elyas Mehraein holding a coffee cup" fetchpriority="high" decoding="async">
-                </picture>
+            <div class="photo-stage">
+                <div class="photo">
+                    <div class="photo-inner" id="photo-target">
+                        <img id="face-normal" class="face-layer is-active" src="img/elyas.webp"
+                            alt="Portrait of Elyas Mehraein holding a coffee cup" width="300" height="400"
+                            fetchpriority="high" decoding="async">
+                        <img id="face-dodge-right" class="face-layer" src="img/elyas-dodge-right.jpg"
+                            alt="Elyas looking right in surprise" width="300" height="400" decoding="async">
+                        <img id="face-dodge-left" class="face-layer" src="img/elyas-dodge-left.jpg"
+                            alt="Elyas looking left in surprise" width="300" height="400" decoding="async">
+                        <img id="face-sliced" class="face-layer" src="img/elyas-sliced.jpg"
+                            alt="Cup sliced in half with tea spilling" width="300" height="400" decoding="async">
+                        <canvas id="tea-canvas" class="tea-canvas"></canvas>
+                        <div id="sweat-drop" class="sweat-drop" aria-hidden="true">💧</div>
+                        <div id="slice-flash" class="slice-flash" aria-hidden="true"></div>
+                    </div>
+                    <div id="tea-bubble" class="tea-bubble" aria-hidden="true">
+                        <span class="tea-msg">ای وای چایییییم ریخت! 😱</span>
+                        <button id="refill-btn" class="refill-btn" type="button">🫖 دوباره چای بریز</button>
+                    </div>
+                </div>
+                <p class="photo-hint" aria-hidden="true">⚔️ شمشیر دستته؛ به عکس نزدیک شو یا با سرعت بزن ببین چی میشه!</p>
             </div>
 
             <div class="intro">
@@ -94,6 +110,8 @@
     <footer class="site-footer">
         <p>© 2026 Elyas Mehraein</p>
     </footer>
+
+    <script src="js/sword-game.js" defer></script>
 </body>
 
 </html>

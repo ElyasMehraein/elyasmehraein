@@ -10,7 +10,10 @@ No build step, no JavaScript, no dependencies: plain HTML + CSS.
 ```
 index.html                  the whole page
 css/style.css               all styles (including responsive rules)
-img/elyas.jpg | .webp       portrait photo
+js/sword-game.js            interactive sword cursor & evasion mechanics
+img/elyas.jpg | .webp       default portrait photo
+img/elyas-dodge-*.jpg       dodging/evasion reaction portraits
+img/elyas-sliced.jpg        sliced cup reaction portrait
 img/bg.jpg                  grunge background artwork
 img/og.jpg                  1200×630 social preview image
 img/favicon-32.png          32×32 favicon
