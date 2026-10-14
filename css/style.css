@@ -195,6 +195,7 @@ h1::after {
 .contact a {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     padding: 12px 20px;
     border: 1px solid var(--line);
@@ -206,6 +207,7 @@ h1::after {
     font-size: 15px;
     font-weight: 500;
     text-decoration: none;
+    max-width: 260px;
     transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
 }
 

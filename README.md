@@ -25,7 +25,7 @@ CNAME                       custom domain for GitHub Pages
 Everything lives in `index.html`:
 
 - name, tagline and skills → `<section class="hero">`
-- phone / email / GitHub / Instagram → `<nav class="contact">`
+- GitHub → `<nav class="contact">`
 - page title, description and social preview → `<head>`
 
 Colours and spacing are CSS variables at the top of `css/style.css`
