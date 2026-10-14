@@ -74,12 +74,13 @@
 
         // Track sword cursor across screen
         window.addEventListener('pointermove', (e) => {
+            if (e.pointerType !== 'mouse') return;
             swordCursor.style.opacity = '1';
             swordCursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
         });
 
         document.addEventListener('mouseleave', () => {
-            swordCursor.style.opacity = '0';
+            if (swordCursor) swordCursor.style.opacity = '0';
         });
 
         // Handle pointer position logic (shared for move and touch-down)

@@ -150,12 +150,25 @@ img {
 }
 
 /* Sword Cursor */
-body, a, button, input {
-    cursor: none !important;
+@media (pointer: fine) {
+    body, a, button, input {
+        cursor: none !important;
+    }
+
+    .sword-cursor {
+        display: block;
+        opacity: 0;
+    }
+}
+
+@media (pointer: coarse) {
+    .sword-cursor {
+        display: none !important;
+    }
 }
 
 .sword-cursor {
-    display: block;
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -167,6 +180,7 @@ body, a, button, input {
     margin-top: -4px;
     will-change: transform;
     filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+    transition: opacity 0.2s ease;
 }
 
 .sword-svg {
