@@ -120,6 +120,8 @@ img {
     animation: rise 0.7s ease both;
     user-select: none;
     -webkit-user-select: none;
+    /* Let a finger swipe over the portrait control the sword, not scroll the page. */
+    touch-action: none;
 }
 
 .photo::after {
@@ -154,21 +156,11 @@ img {
     body, a, button, input {
         cursor: none !important;
     }
-
-    .sword-cursor {
-        display: block;
-        opacity: 0;
-    }
-}
-
-@media (pointer: coarse) {
-    .sword-cursor {
-        display: none !important;
-    }
 }
 
 .sword-cursor {
-    display: none;
+    display: block;
+    opacity: 0;
     position: fixed;
     top: 0;
     left: 0;
@@ -181,6 +173,11 @@ img {
     will-change: transform;
     filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
     transition: opacity 0.2s ease;
+}
+
+/* A quick tap should reveal the sword immediately, not just start a fade-in. */
+.sword-cursor.touching {
+    transition: none;
 }
 
 .sword-svg {

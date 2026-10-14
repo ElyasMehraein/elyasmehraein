@@ -1,7 +1,7 @@
 # elyasmehraein.ir
 
 My personal website — a static, single-page site served by GitHub Pages.
-No build step, no JavaScript, no dependencies: plain HTML + CSS.
+No build step or dependencies: plain HTML, CSS and vanilla JavaScript.
 
 🔗 **https://elyasmehraein.ir**
 
@@ -11,6 +11,7 @@ No build step, no JavaScript, no dependencies: plain HTML + CSS.
 index.html                  the whole page
 css/style.css               all styles (including responsive rules)
 js/sword-game.js            interactive sword cursor & evasion mechanics
+tests/sword-game.test.cjs    interaction tests (Node.js built-in test runner)
 img/elyas.jpg | .webp       default portrait photo
 img/elyas-dodge-*.jpg       dodging/evasion reaction portraits
 img/elyas-sliced.jpg        sliced cup reaction portrait
@@ -40,6 +41,14 @@ Colours and spacing are CSS variables at the top of `css/style.css`
 python3 -m http.server 8000
 # then open http://localhost:8000
 ```
+
+## Sword interaction
+
+The sword follows the mouse on desktop and the active finger on touchscreens.
+Touching the lower half of the portrait shows the sliced reaction; other regions
+dodge. On touchscreens, the reaction stays visible briefly after lifting a finger.
+
+Run the interaction tests with `node --test tests/sword-game.test.cjs`.
 
 ## Deployment
 

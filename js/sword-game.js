@@ -65,6 +65,10 @@
 
         let currentState = 'normal';
         let isSliced = false;
+        let activeTouchId = null;
+        let touchOnPhoto = false;
+        let resetTimer = null;
+        let slashTimer = null;
 
         function setPhotoState(state) {
             if (currentState === state) return;
@@ -72,69 +76,130 @@
             portraitImg.src = IMAGES[state] || IMAGES.normal;
         }
 
-        // Track sword cursor across screen
-        window.addEventListener('pointermove', (e) => {
-            if (e.pointerType !== 'mouse') return;
+        function positionSword(point) {
+            swordCursor.style.transform = `translate3d(${point.clientX}px, ${point.clientY}px, 0)`;
             swordCursor.style.opacity = '1';
-            swordCursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
-        });
+        }
 
-        document.addEventListener('mouseleave', () => {
-            if (swordCursor) swordCursor.style.opacity = '0';
-        });
+        function slashSword() {
+            swordCursor.classList.add('slashing');
+            clearTimeout(slashTimer);
+            slashTimer = setTimeout(() => swordCursor.classList.remove('slashing'), 150);
+        }
 
-        // Handle pointer position logic (shared for move and touch-down)
-        function updateStateFromPointer(e) {
-            // For mouse, if we already clicked and sliced, stop responding to hover
-            if (isSliced && e.pointerType === 'mouse' && e.type === 'pointermove') return;
+        function updateStateFromPointer(point, isTouch, rect = photoArea.getBoundingClientRect()) {
+            const relX = (point.clientX - rect.left) / rect.width - 0.5;
+            const relY = (point.clientY - rect.top) / rect.height - 0.5;
 
-            const rect = photoArea.getBoundingClientRect();
-            const relX = (e.clientX - rect.left) / rect.width - 0.5;  // -0.5 to 0.5
-            const relY = (e.clientY - rect.top) / rect.height - 0.5;  // -0.5 to 0.5
-
-            if (Math.abs(relX) > Math.abs(relY)) {
-                if (relX > 0) {
-                    setPhotoState('left');
-                } else {
-                    setPhotoState('right');
-                }
+            // On mobile, the lower half (including the corners) is the strike target.
+            if (isTouch && relY > 0) {
+                setPhotoState('sliced');
+            } else if (Math.abs(relX) > Math.abs(relY)) {
+                setPhotoState(relX > 0 ? 'left' : 'right');
             } else {
-                if (relY > 0) {
-                    setPhotoState('top');
-                } else {
-                    // On touch (mobile), touching the top triggers the slice directly
-                    if (e.pointerType === 'touch') {
-                        setPhotoState('sliced');
-                    } else {
-                        setPhotoState('bottom');
-                    }
-                }
+                setPhotoState(relY > 0 ? 'top' : 'bottom');
             }
         }
 
-        photoArea.addEventListener('pointermove', updateStateFromPointer);
+        // Touch events keep tracking the finger even if a swipe began outside the photo
+        // or the browser starts scrolling. Only the portrait itself disables scrolling.
+        function updateTouchPhoto(touch) {
+            const rect = photoArea.getBoundingClientRect();
+            const inside = touch.clientX >= rect.left && touch.clientX <= rect.right &&
+                touch.clientY >= rect.top && touch.clientY <= rect.bottom;
 
-        photoArea.addEventListener('pointerdown', (e) => {
-            if (e.pointerType === 'mouse') {
-                // On desktop, any click slices
-                isSliced = true;
-                setPhotoState('sliced');
-            } else if (e.pointerType === 'touch') {
-                // On mobile, evaluate initial tap position
-                updateStateFromPointer(e);
+            if (inside) {
+                touchOnPhoto = true;
+                updateStateFromPointer(touch, true, rect);
+            } else if (touchOnPhoto) {
+                touchOnPhoto = false;
+                setPhotoState('normal');
             }
+        }
+
+        function getActiveTouch(changedTouches) {
+            for (let i = 0; i < changedTouches.length; i++) {
+                if (changedTouches[i].identifier === activeTouchId) return changedTouches[i];
+            }
+            return null;
+        }
+
+        window.addEventListener('pointermove', (e) => {
+            if (e.pointerType === 'mouse' && activeTouchId === null) positionSword(e);
         });
 
-        // Reset to normal when mouse leaves the photo frame
-        photoArea.addEventListener('pointerleave', () => {
+        document.addEventListener('mouseleave', () => {
+            if (activeTouchId === null) swordCursor.style.opacity = '0';
+        });
+
+        photoArea.addEventListener('pointermove', (e) => {
+            if (e.pointerType !== 'mouse' || isSliced || activeTouchId !== null) return;
+            clearTimeout(resetTimer);
+            resetTimer = null;
+            updateStateFromPointer(e, false);
+        });
+
+        photoArea.addEventListener('pointerdown', (e) => {
+            if (e.pointerType !== 'mouse') return;
+            clearTimeout(resetTimer);
+            resetTimer = null;
+            isSliced = true;
+            setPhotoState('sliced');
+        });
+
+        photoArea.addEventListener('pointerleave', (e) => {
+            if (e.pointerType !== 'mouse' || activeTouchId !== null) return;
             isSliced = false;
             setPhotoState('normal');
         });
 
-        // Simple sword tilt on click anywhere
-        window.addEventListener('pointerdown', () => {
-            swordCursor.classList.add('slashing');
-            setTimeout(() => swordCursor.classList.remove('slashing'), 150);
+        window.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse') slashSword();
         });
+
+        window.addEventListener('touchstart', (e) => {
+            if (activeTouchId !== null || !e.changedTouches.length) return;
+            const touch = e.changedTouches[0];
+            activeTouchId = touch.identifier;
+            clearTimeout(resetTimer);
+            resetTimer = null;
+            touchOnPhoto = false;
+            isSliced = false;
+            swordCursor.classList.add('touching');
+            positionSword(touch);
+            slashSword();
+            updateTouchPhoto(touch);
+            if (!touchOnPhoto) setPhotoState('normal');
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            const touch = getActiveTouch(e.changedTouches);
+            if (!touch) return;
+            positionSword(touch);
+            updateTouchPhoto(touch);
+        }, { passive: true });
+
+        function finishTouch(e) {
+            const touch = getActiveTouch(e.changedTouches);
+            if (!touch) return;
+            if (e.type === 'touchend') updateTouchPhoto(touch);
+            activeTouchId = null;
+            swordCursor.classList.remove('touching');
+            swordCursor.style.opacity = '0';
+
+            // Leave the reaction visible briefly after a tap so it can be seen on mobile.
+            if (e.type === 'touchend' && touchOnPhoto) {
+                resetTimer = setTimeout(() => {
+                    resetTimer = null;
+                    setPhotoState('normal');
+                }, 900);
+            } else {
+                setPhotoState('normal');
+            }
+            touchOnPhoto = false;
+        }
+
+        window.addEventListener('touchend', finishTouch, { passive: true });
+        window.addEventListener('touchcancel', finishTouch, { passive: true });
     }
 })();
