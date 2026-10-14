@@ -180,6 +180,12 @@ img {
     transition: none;
 }
 
+/* While a finger is down, lift the sword 100px up and left so it isn't hidden under the finger. */
+.sword-cursor.touching {
+    margin-left: -104px;
+    margin-top: -104px;
+}
+
 .sword-svg {
     display: block;
     transform-origin: 4px 4px;
