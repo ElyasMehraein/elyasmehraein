@@ -82,38 +82,46 @@
             swordCursor.style.opacity = '0';
         });
 
-        // Switch image based on which quadrant/sector of the photo the mouse is in
-        photoArea.addEventListener('pointermove', (e) => {
-            if (isSliced) return;
+        // Handle pointer position logic (shared for move and touch-down)
+        function updateStateFromPointer(e) {
+            // For mouse, if we already clicked and sliced, stop responding to hover
+            if (isSliced && e.pointerType === 'mouse' && e.type === 'pointermove') return;
 
             const rect = photoArea.getBoundingClientRect();
             const relX = (e.clientX - rect.left) / rect.width - 0.5;  // -0.5 to 0.5
             const relY = (e.clientY - rect.top) / rect.height - 0.5;  // -0.5 to 0.5
 
-            // Dodge to the opposite side of where the cursor is pointing
             if (Math.abs(relX) > Math.abs(relY)) {
                 if (relX > 0) {
-                    // Mouse is on the right -> ambush/dodge to the left corner
                     setPhotoState('left');
                 } else {
-                    // Mouse is on the left -> ambush/dodge to the right corner
                     setPhotoState('right');
                 }
             } else {
                 if (relY > 0) {
-                    // Mouse is at the bottom -> ambush/dodge to the top
                     setPhotoState('top');
                 } else {
-                    // Mouse is at the top -> ambush/dodge to the bottom
-                    setPhotoState('bottom');
+                    // On touch (mobile), touching the top triggers the slice directly
+                    if (e.pointerType === 'touch') {
+                        setPhotoState('sliced');
+                    } else {
+                        setPhotoState('bottom');
+                    }
                 }
             }
-        });
+        }
 
-        // Click on the photo to slice the cup
-        photoArea.addEventListener('pointerdown', () => {
-            isSliced = true;
-            setPhotoState('sliced');
+        photoArea.addEventListener('pointermove', updateStateFromPointer);
+
+        photoArea.addEventListener('pointerdown', (e) => {
+            if (e.pointerType === 'mouse') {
+                // On desktop, any click slices
+                isSliced = true;
+                setPhotoState('sliced');
+            } else if (e.pointerType === 'touch') {
+                // On mobile, evaluate initial tap position
+                updateStateFromPointer(e);
+            }
         });
 
         // Reset to normal when mouse leaves the photo frame
